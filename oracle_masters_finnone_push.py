@@ -1,44 +1,106 @@
 import os
+import logging
+from logging.handlers import RotatingFileHandler 
 import cx_Oracle
-from flask import Flask, request, json
+from flask import Flask, request, json, render_template, session, send_from_directory, url_for, redirect
 import json
-import urllib.request
-import urllib.parse
+import requests
+import random
+from datetime import datetime
+from werkzeug import secure_filename
+import pathlib
+import datetime
+import psycopg2
+import pymssql
+from psycopg2.extras import NamedTupleCursor
+import shutil
+import datetime
+from login import SendOTP, VerifyOTP, GenerateOTP
+from forms import LoginForm
 
 db_user = os.environ.get('DBAAS_USER_NAME', 'FEDFINA_CAS')
 db_password = os.environ.get('DBAAS_USER_PASSWORD', 'migration123')
 db_connect = os.environ.get('DBAAS_DEFAULT_CONNECT_DESCRIPTOR', "172.16.103.43:1533/PRDLMSDB")
-service_port = port=os.environ.get('PORT', '6000')
+service_port = port=os.environ.get('PORT', '6001')
 
-application = Flask(__name__)
+from flask_cors import CORS, cross_origin
 
-def masters_view_queries(viewname):
+app = Flask(__name__)
+
+app.secret_key = 'development key'
+cors = CORS(app)
+
+UPLOAD_FOLDER = 'uploads/'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER 
+
+@app.route('/logout', methods = ['GET', 'POST'])
+def logout():
+    session["VerifiedOTP"] = ''
+    session["sMobileNumber"] = ''
+    return render_template('login.html')
+
+def logg_create():
+    import logging
+    logFormatStr = '[%(asctime)s] p%(process)s {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s'
+    logging.basicConfig(format = logFormatStr, filename = "global.log", level=logging.DEBUG)
+    formatter = logging.Formatter(logFormatStr,'%m-%d %H:%M:%S')
+    streamHandler = logging.StreamHandler()
+    streamHandler.setFormatter(formatter)
+    app.logger.addHandler(streamHandler)
+    app.logger.info("Logging is set up.")
+
+@app.route('/', methods = ['GET', 'POST'])
+def index():
+    form = LoginForm()
+
+    if "VerifiedOTP" in session and session["VerifiedOTP"] =="Y":
+        return render_template('index.html')
+    else:
+        form = LoginForm()
+        return render_template('login.html', form = form)
+
+def masters_view_queries(viewname, empcode='', selectedvalue=''):
     select_map = {
-        "LOS_BRANCH_CODE_MOBILE" : "select BRANCHCODE, BRANCHDESC from LOS_BRANCH_CODE_MOBILE",
-        "LOS_CHANNEL_MOBILE" : "select CHANNEL, CHANNELDESC from LOS_CHANNEL_MOBILE",
-        "LOS_DSA_MOBILE" : "SELECT DSA, DSANAME FROM LOS_DSA_MOBILE",
-        "LOS_CONNECTOR_MOBILE" : "SELECT CONNECTOR_CODE, CONNECTOR_NAME FROM LOS_CONNECTOR_MOBILE",
-        "LOS_PRODUCT_MOBILE" : "SELECT PRODUCT_ID, PRODUCT_DESC FROM LOS_PRODUCT_MOBILE",
-        "LOS_INSPECTOR_MOBILE" : "SELECT INSPECTORID, INSPECTORNAME FROM LOS_INSPECTOR_MOBILE",
-        "LOS_title_MOBILE" : "select TITLE_VAL, TITLE_DESC from LOS_title_MOBILE",
-        "LOS_Scheme_MOBILE" : "SELECT SCHEMEID, SCHEME_DESC FROM LOS_Scheme_MOBILE",
-        "LOS_APPLICANTTYPE_MOBILE" : "SELECT VALUE, DESCRIPTION FROM LOS_APPLICANTTYPE_MOBILE",
-        "LOS_DOCTYPE_MOBILE" : "SELECT VALUE, DESCRIPTION FROM LOS_DOCTYPE_MOBILE",
-        "LOS_ADDRPRROFDOC_MOBILE" : "SELECT VALUE, DESCRIPTION FROM LOS_ADDRPRROFDOC_MOBILE",
-        "LOS_ADDRTYPE_MOBILE" : "SELECT VALUE, DESCRIPTION FROM LOS_ADDRTYPE_MOBILE",
-        "LOS_OWNERSHIPTYPE_MOBILE" : "SELECT VALUE, DESCRIPTION FROM LOS_OWNERSHIPTYPE_MOBILE",
-        "LOS_COUNTRY_MOBILE" : "SELECT COUNTRYID, COUNTRYNAME FROM LOS_COUNTRY_MOBILE",
-        "LOS_STATE_MOBILE" : "SELECT STATEID, STATEDESC FROM LOS_STATE_MOBILE",
-        "LOS_city_MOBILE" : "SELECT CITYID, CITY_NAME FROM LOS_city_MOBILE",
-        "LOS_CUSTPROFILE_MOBILE" : "SELECT CUST_PROFILE_ID, CUST_PROFILE_DESC FROM LOS_CUSTPROFILE_MOBILE",
-        "LOS_ZIPCODE_MOBILE" : "SELECT PINCODE, PINCODE_DESC FROM LOS_ZIPCODE_MOBILE",
-        "LOS_CUSTWORK_DTLS_MOBILE" : "SELECT * FROM LOS_CUSTWORK_DTLS_MOBILE",
-        "LOS_OWNERSHIP_TYPE_MOBILE" : "SELECT * FROM LOS_OWNERSHIP_TYPE_MOBILE",
-        "LOS_PROPERTY_TYPE_MOBILE" : "SELECT * FROM LOS_PROPERTY_TYPE_MOBILE",
-        "LOS_CUST_DATA_MOBILE" : "SELECT * FROM LOS_CUST_DATA_MOBILE",
-        "LOS_PROPERTY_usage_MOBILE" : "select * from LOS_PROPERTY_usage_MOBILE"
+        "LOS_CUSTWORK_DTLS_MOBILE" : "select INDUSTRY_TYPE, INDUSTRYDESC from LOS_CUSTWORK_DTLS_MOBILE Group by INDUSTRY_TYPE, INDUSTRYDESC order by INDUSTRYDESC",
+        "LOS_BRANCH_CODE_MOBILE" : "select BRANCHCODE, BRANCHDESC from LOS_BRANCH_CODE_MOBILE Group By BRANCHCODE, BRANCHDESC order by BRANCHDESC",
+        "BRANCH_CODE_ALL" : "select * from LOS_BRANCH_CODE_MOBILE",
+        "LOS_CHANNEL_MOBILE" : "select CHANNELDESC, CHANNEL from LOS_CHANNEL_MOBILE Group By CHANNELDESC, CHANNEL order by CHANNEL",
+        "LOS_DSA_MOBILE" : "select DSA,DSANAME FROM LOS_DSA_MOBILE  GROUP BY DSA,DSANAME order by DSANAME",
+        "LOS_CONNECTOR_MOBILE" : "select CONNECTOR_CODE, CONNECTOR_NAME FROM LOS_CONNECTOR_MOBILE Group By CONNECTOR_CODE, CONNECTOR_NAME order by CONNECTOR_NAME",
+        "LOS_PRODUCT_MOBILE" : "select PRODUCT_DESC, PRODUCT_ID FROM LOS_PRODUCT_MOBILE WHERE PRODUCT_ID IN ('STL', 'HL') Group By PRODUCT_DESC, PRODUCT_ID order by PRODUCT_DESC",
+        "LOS_INSPECTOR_MOBILE" : "select * FROM LOS_INSPECTOR_MOBILE where inspectorname like '{}%' order by INSPECTORNAME".format(empcode),
+        "LOS_title_MOBILE" : "select TITLE_VAL, TITLE_DESC from LOS_title_MOBILE Group By TITLE_VAL, TITLE_DESC order by TITLE_DESC",
+        "LOS_Scheme_MOBILE" : "select SCHEME_DESC, SCHEMEID FROM LOS_Scheme_MOBILE WHERE SCHEME_DESC LIKE 'STL%' OR LIKE 'HL%'  GROUP BY SCHEME_DESC,SCHEMEID order by SCHEME_DESC",
+        "LOS_APPLICANTTYPE_MOBILE" : "select VALUE, DESCRIPTION FROM LOS_APPLICANTTYPE_MOBILE Group By VALUE, DESCRIPTION order by DESCRIPTION",
+        "LOS_DOCTYPE_MOBILE" : "select VALUE, DESCRIPTION FROM LOS_DOCTYPE_MOBILE Group By VALUE, DESCRIPTION order by DESCRIPTION",
+        "LOS_ADDRPRROFDOC_MOBILE" : "select VALUE, DESCRIPTION FROM LOS_ADDRPRROFDOC_MOBILE Group By VALUE, DESCRIPTION order by DESCRIPTION",
+        "LOS_ADDRTYPE_MOBILE" : "select VALUE, DESCRIPTION FROM LOS_ADDRTYPE_MOBILE Group By VALUE, DESCRIPTION order by DESCRIPTION",
+        "LOS_OWNERSHIPTYPE_MOBILE" : "select VALUE, DESCRIPTION FROM LOS_OWNERSHIPTYPE_MOBILE Group By VALUE, DESCRIPTION order by DESCRIPTION",
+        "LOS_COUNTRY_MOBILE" : "select COUNTRYID, COUNTRYNAME FROM LOS_COUNTRY_MOBILE Group By COUNTRYID, COUNTRYNAME order by COUNTRYNAME",
+        "LOS_STATE_MOBILE" : "select STATEID, STATEDESC FROM LOS_STATE_MOBILE Group By STATEID, STATEDESC order by STATEDESC",
+        "LOS_city_MOBILE" : "select CITYID, CITY_NAME FROM LOS_city_MOBILE Group By CITYID, CITY_NAME order by CITY_NAME",
+        "LOS_CUSTPROFILE_MOBILE" : "select CUST_PROFILE_ID, CUST_PROFILE_DESC FROM LOS_CUSTPROFILE_MOBILE Group By CUST_PROFILE_ID, CUST_PROFILE_DESC order by CUST_PROFILE_DESC",
+        "LOS_ZIPCODE_MOBILE" : "select PINCODE, PINCODE_DESC FROM LOS_ZIPCODE_MOBILE Group By PINCODE, PINCODE_DESC order by PINCODE_DESC",
+        "EMPLOYERTYPE" : "select EMPLOYER_TYPE_ID,EMPLOYER_TYPE FROM LOS_CUSTWORK_DTLS_MOBILE  where EMPLOYER_TYPE is not null Group By EMPLOYER_TYPE_ID,EMPLOYER_TYPE  order by EMPLOYER_TYPE",
+        "EMPLOYERNAME" : "select EMPLOYER_ID,EMPLOYER_NAME FROM LOS_CUSTWORK_DTLS_MOBILE  where EMPLOYER_NAME is not null Group By EMPLOYER_ID,EMPLOYER_NAME order by EMPLOYER_NAME",
+        "LOS_OWNERSHIP_TYPE_MOBILE" : "select *  FROM LOS_OWNERSHIP_TYPE_MOBILE order by LOS_OWNERSHIP_TYPE_MOBILE",
+        "LOS_PROPERTY_TYPE_MOBILE" : "select *  FROM LOS_PROPERTY_TYPE_MOBILE order by LOS_PROPERTY_TYPE_MOBILE",
+        "LOS_CUST_DATA_MOBILE" : "select * FROM LOS_CUST_DATA_MOBILE order by LOS_CUST_DATA_MOBILE",
+        "LOS_city_MOBILE" : "select CITY_NAME, CITYID FROM LOS_city_MOBILE Group By CITY_NAME, CITYID order by CITYID",
+        "LOS_STATE_MOBILE" : "select STATEDESC, STATEID FROM LOS_STATE_MOBILE Group By STATEDESC, STATEID order by STATEID",
+        "LOS_OWNERSHIP_TYPE_MOBILE" : "select * FROM LOS_OWNERSHIP_TYPE_MOBILE",
+        "ZIPCODE_CITY" : "select CITYID, CITY FROM LOS_ZIPCODE_MOBILE where PINCODE = '{}'".format(selectedvalue),
+        "ZIPCODE_STATE" : "select CITYID,STATE_ID FROM LOS_ZIPCODE_MOBILE where PINCODE = '{}'".format(selectedvalue),
+        "ZIPCODE" : "select * FROM LOS_ZIPCODE_MOBILE",
+        "LOS_PROPERTY_usage_MOBILE" : "select PROP_USAGE_DESC, PROP_USAGE_VAL from LOS_PROPERTY_usage_MOBILE Group By PROP_USAGE_DESC, PROP_USAGE_VAL order by PROP_USAGE_VAL",
+        "DEDUPE":"select * from LOS_CUST_DATA_MOBILE where MOBILE = '{}'".format(selectedvalue), 
+        "mobile_data":"select * from MOBILE_DATA where LOAN_AGREEMENT_NO  = '{}'".format(selectedvalue) ,
+        "post_disbursal_documents_upload":"select sstate,sbranch,nlanid,ncustid,skycdir,sgpcfbdir,sgpcbbdir,sgpcfcdir,sgpcbcdir,sappformdir,sIVRdir,sgrcfdir,sgrcbdir from post_disbursal_documents_upload where nlanid = '{}'".format(selectedvalue)
     }
+    print(select_map[viewname])
     return select_map[viewname]
+ 
+
 
 def makeDictFactory(cursor):
     columnNames = [d[0] for d in cursor.description]
@@ -46,36 +108,100 @@ def makeDictFactory(cursor):
         return dict(zip(columnNames, args))
     return createRow
 
-@application.route('/oracle_finnone_masters')
-def oracle_finone_masters():
-    viewname = request.args.get("viewname")
-    connection = cx_Oracle.connect(db_user, db_password, db_connect)
-    cur = connection.cursor()
-    cur.execute(masters_view_queries(viewname))
-    cur.rowfactory = makeDictFactory(cur)
-    masters_list = cur.fetchall()
-    return json.dumps(masters_list)
+def check_form_key_val(key, variable_flag = '', variable_val = ''):
+    if variable_flag:
+        if len(variable_val) < 0:
+            return '' 
+        return variable_val
+    form = request.json
+    return form.get(key) if form.get(key) else ''
 
-@application.route('/finnone_app_push')
-def finone_app_push():
-    args = request.args
+
+
+def convert_date_format(key):
+    dob = check_form_key_val(key)
+    if dob:
+        date_only = dob.strip().split('T')
+        d = datetime.strptime(date_only[0], '%Y-%m-%d')
+        dob = d.strftime('%d-%b-%Y').upper()
+    return dob
+    
+@app.route('/oracle_finnone_masters')
+def oracle_finone_masters():
+    try:
+        viewname = request.args.get("viewname")
+        empcode = request.args.get("empcode")
+        selectedvalue = request.args.get("selectedvalue")
+        if selectedvalue == '003':
+            query = masters_view_queries('LOS_DSA_MOBILE')
+        elif selectedvalue == '002':
+            query = masters_view_queries('LOS_CONNECTOR_MOBILE')
+        else:    
+            query = masters_view_queries(viewname, empcode, selectedvalue)
+    
+        connection = cx_Oracle.connect(db_user, db_password, db_connect) 
+        cur = connection.cursor()
+        cur.execute(query)
+        app.logger.debug(query)
+        cur.rowfactory = makeDictFactory(cur)
+        masters_list = cur.fetchall()
+        dsa_masters_list = []
+        if viewname in ("ZIPCODE_CITY", "ZIPCODE_STATE"):
+            for val in masters_list:
+                 formatstr = {'CITY':val[list(val.keys())[0]],'STATE':str(val[list(val.keys())[1]])}
+                 return  json.dumps(formatstr)
+
+        if selectedvalue:
+            for val in masters_list:
+                dsa_masters_list.append({'key':val[list(val.keys())[0]],'value' : val[list(val.keys())[1]]})
+            return json.dumps(dsa_masters_list, indent=4, default=str)
+        return json.dumps(masters_list, indent=4, sort_keys=True, default=str)
+    except (Exception, psycopg2.Error) as error :
+        message = "Failed to insert record into mobile table :" + error
+        throw_exception(connection, message)
+    finally:
+        close_connection(connection, cur)
+
+@app.route('/finnone_app_push', methods=['POST'])
+def finnone_app_push():
+    form = request.json
+    fullname = form.get("firstname")
+    sp_fullname = fullname.strip().split(' ')
+    firstname = middlename = lastname = ''
+    if len(sp_fullname) > 2:
+        #had 3 words
+        firstname = sp_fullname[0]
+        middlename = sp_fullname[1]
+        lastname = sp_fullname[2]
+        
+    elif len(sp_fullname) > 1:
+        #has 2 words
+        firstname = sp_fullname[0]
+        middlename = ''
+        lastname = sp_fullname[1]
+    else:
+        firstname = sp_fullname[0]
+        middlename = ''
+        lastname = ''
+        #has 1 word
+    salutation = check_form_key_val("title") + ' ' + firstname   
     post_data = {
-        "unqRequestId": args.get("leadid"),
-        "sourceSystem": "SFDC",
+        "unqRequestId": random.randrange(20, 5000, 5),
+        "sourceSystem": "BESPOKE",
         "userId": "cointrive",
         "password": "zqbAx8rZ0LvWMftg38eTatwjEANYAo/6",
         "sourceDetail": {
-            "branchCode": args.get("branchcode"),
-            "product": "LAP",
+            "branchCode": check_form_key_val("branchcode"),
+            "product": "STL",
             "scheme": "344",
-            "applicationFormNo": "MO" + args.get("leadid"),
+            "applicationFormNo": "MO" + str(random.randrange(20, 5000, 5)),
             "channel": "003",
             "dsa": "21",
             "dealer": "1",
             "channelName": "",
             "reCode": "8",
-            "loanAmount": args.get("loanAmount"),
-            "loanTenure": args.get("loanTenure"),
+            "loanAmount": check_form_key_val("loanAmount"),
+            "loanTenure": check_form_key_val("loanTenure"),
             "promotion": "",
             "asset": "",
             "assetType": "",
@@ -97,28 +223,39 @@ def finone_app_push():
             "userid": "FEDA",
             "submitDate": ""
         },
+        "documents": [
+			{
+				"docType": "PAN",
+		        "documentPath": "\\10.1.57.149\\cc_views\\HFFL\\FileUpload\\h2_20190329053202039.png"
+			},
+			{
+				"docType": "DOB",
+		        "documentPath": "\\10.1.57.149\\cc_views\\HFFL\\FileUpload\\h2_20190329053202039.png"
+			}
+		],
         "applicantDetail": [
 		{
                 "applicantType": "P",
                 "indcorpFlag": "I",
-                "salutation": args.get("salutation"),
+                "customerID":"",
+                "salutation": salutation,
                 "existCustFlag": "N",
-                "title": args.get("title"),
+                "title": check_form_key_val("title"),
                 "dobProof": "Y",
-                "firstName": args.get("firstname"),
-                "middleName": args.get("middlename"),
-                "lastName": args.get("lastname"),
-                "dateOfBirth": args.get("dob"),
+                "firstName": firstname,
+                "middleName": middlename,
+                "lastName": lastname,
+                "dateOfBirth": convert_date_format("dob"),
                 "natureOfBusniness": "",
                 "orgType": "",
                 "dateOfIncorporation": "",
-                "panCard": args.get("pancard"),
+                "panCard": check_form_key_val("pancard"),
                 "addressProofDocument": "DL",
-                "ownershipType": args.get("ownership"),
-                "customerProfile": args.get("profile"),
-                "employerName": args.get("employerName"),
-                "employerType": args.get("employerType"),
-                "industryType": args.get("industryType"),
+                "ownershipType": check_form_key_val("ownership"),
+                "customerProfile": check_form_key_val("profile"),
+                "employerName": check_form_key_val("employerName"),
+                "employerType": check_form_key_val("employerType"),
+                "industryType": check_form_key_val("industryType"),
                 "tradeLicenceNo": "",
                 "panNoFlag": "",
                 "relation": "",
@@ -126,20 +263,20 @@ def finone_app_push():
                 "passportNo": "",
                 "nationalId": "",
                 "vechicleOwned": "",
-                "others": "",
+                "IVRs": check_form_key_val("emp_IVRs"),
                 "cibilScore": "",
                 "maritalStatus": "",
                 "gender": "",
                 "constitution": "",
                 "residentStatus": "",
-                "currentWorkingYear": args.get("currentWorkingYear"),
-                "currentWorkingMonth": args.get("currentWorkingMonth"),
-                "totalWorkingYear": args.get("totalWorkingYear"),
-                "totalWorkingMonth": args.get("totalWorkingMonth"),
-                "companyName": args.get("companyName"),
-                "incorporationYear": args.get("incorporationYear"),
-                "currentBusinessYear": args.get("currentBusinessYear"),
-                "currentBusinessMonth": args.get("currentBusinessMonth"),
+                "currentWorkingYear": check_form_key_val("currentWorkingYear"),
+                "currentWorkingMonth": check_form_key_val("currentWorkingMonth"),
+                "totalWorkingYear": check_form_key_val("totalWorkingYear"),
+                "totalWorkingMonth": check_form_key_val("totalWorkingMonth"),
+                "companyName": check_form_key_val("companyName"),
+                "incorporationYear": check_form_key_val("incorporationYear"),
+                "currentBusinessYear": check_form_key_val("currentBusinessYear"),
+                "currentBusinessMonth": check_form_key_val("currentBusinessMonth"),
                 "field1": "",
                 "field2": "",
                 "field3": "",
@@ -153,19 +290,19 @@ def finone_app_push():
                 "addressDetail": [
                     {
                         "addressType": "CURRES",
-                        "address1": args.get("address1"),
-                        "address2": args.get("address2"),
+                        "address1": check_form_key_val("address1"),
+                        "address2": check_form_key_val("address2"),
                         "address3": "",
                         "address4": "",
                         "extensionNo": "",
-                        "mobile": args.get("mobile"),
-                        "email": args.get("email"),
-                        "country": args.get("country"),
-                        "state": args.get("state"),
-                        "city": args.get("city"),
-                        "pinCode": args.get("pincode"),
+                        "mobile": check_form_key_val("mobile"),
+                        "email": check_form_key_val("email"),
+                        "country": check_form_key_val("country"),
+                        "state": check_form_key_val("state"),
+                        "city": check_form_key_val("city"),
+                        "pinCode": check_form_key_val("pincode"),
                         "mailingAddress": "Y",
-                        "businessOwnership": args.get("businessOwnership"),
+                        "businessOwnership": check_form_key_val("businessOwnership"),
                         "field1": "",
                         "field2": "",
                         "field3": "",
@@ -183,17 +320,17 @@ def finone_app_push():
         "propertyDetail": {
             "propertyType": "NEW",
             "propertySubType": "",
-            "propertyUsage": args.get("propertyUsage"),
+            "propertyUsage": check_form_key_val("propertyUsage"),
             "propertyValue": "",
             "colleteralOwnership": "",
             "finalAppraisedValue": "",
             "propertyAddressType": "",
             "propertyAddress1": "",
             "propertyAddress2": "",
-            "propertyCountry": args.get("propertyCountry"),
-            "propertyState": args.get("propertyState"),
-            "propertyCity": args.get("propertyCity"),
-            "propertyPinCode": args.get("propertyPinCode"),
+            "propertyCountry": check_form_key_val("propertyCountry"),
+            "propertyState": check_form_key_val("propertyState"),
+            "propertyCity": check_form_key_val("propertyCity"),
+            "propertyPinCode": check_form_key_val("propertyPinCode"),
             "field1": "",
             "field2": "",
             "field3": "",
@@ -206,15 +343,219 @@ def finone_app_push():
             "field10": ""
         }
     }
+
     print(post_data)
     url = "http://172.16.103.42:8080/FinnOneService/rest/host/j/loanSourcingService"
     try:
         headers = {'content-Type':'application/json','user-id':'PRABHAT','accept':'application/json','operation-flag':'C'}
-        r = requests.post(url, data=json.dumps(post_data), headers=headers)  
+        r = requests.post(url, data=json.dumps(post_data), headers=headers)
         print(r.text)
         print("Done")    
-     
+        return "True"
+
     except Exception as e:
-        print(e) 	
+        print(e)
+
+@app.route('/custid_details',methods = ['GET','POST'])
+def custid_details():
+    try:
+        form = request.args
+        lanid = form.get("lanid")
+        connection = pymssql.connect(server='172.16.103.49', user='READWRITE', password='pass@123', database='Fedfina')
+        cur = connection.cursor()
+        cur.execute(masters_view_queries('mobile_data', '', lanid))
+        masters_list = cur.fetchall()
+        for row in  masters_list :
+                print("Format str - {}".format(row))
+                return  json.dumps({'STATE':row[2],'Branch':row[1],'LANID':row[0], 'CUSTID' : row[3], 'CUSTNAME' : row[4], 'type': 'success', 'message': 'Listed Details for {}'.format(lanid)})
+        return json.dumps({'type':'Error', 'message':"LanID not found in our database records."}) 
+    except IndexError:
+        print("Error in records fetching index")
+        return "Error in records fetching index"
+    except (Exception, pymssql.Error) as error :
+        message =  error
+        throw_exception(connection, message)
+    finally:
+        close_connection(connection, cur)
+    
+def handle_file(f, dynamic_dir, prefix): 
+    filename = secure_filename(f.filename)
+    if filename:
+        p = pathlib.Path(dynamic_dir)
+        p.mkdir(parents=True, exist_ok=True)
+        f.save(os.path.join(dynamic_dir + '\\' + prefix + filename)) 
+        print('Dynamic Dir: {}'.format(os.path.join(dynamic_dir + '\\' + prefix + filename)))
+        print("File '{}' successfully Uploaded".format(filename))
+        return dynamic_dir + '\\' + prefix + filename
+    return ''
+
+def close_connection(connection, cursor):
+    #closing database connection.
+    if(connection):
+        cursor.close()
+        connection.close()
+        print("PostgreSQL connection is closed")
+
+def throw_exception(connection, message):
+    if(connection):
+        print(message)
+
+def insert_disbursal_record(state,branch,lanid,custid,kycdir,gpcfbdir,gpcbbdir,gpcfcdir,gpcbcdir,appformdir,IVRdir,grcfdir,grcbdir):     
+    try:
+        connection = psycopg2.connect(user="postgres", password="Brain$00", host="127.0.0.1", port="5432", database="AgyeyavadMSELAP_LIVE")
+        cursor = connection.cursor() 
+        check_lanid_exists_localdb = db_select_disbursal_images(lanid, True)
+        print("CHECKING LANID EXISTS" + str(check_lanid_exists_localdb))
+        update_columns = ''
+
+            
+        if check_lanid_exists_localdb:
+        
+            if kycdir:
+                update_columns += "skycdir='" + kycdir+ "',"
+            if gpcfbdir:
+                update_columns += "sgpcbbdir='" + gpcfbdir+ "',"
+            elif gpcbbdir:
+                update_columns += "sgpcbbdir='" + gpcbbdir+ "',"
+            elif gpcfcdir:
+                update_columns += "sgpcfcdir='" + gpcfcdir+ "',"
+            elif gpcbcdir:
+                update_columns += "sgpcbcdir='" + gpcbcdir+ "',"
+            elif appformdir:
+                update_columns += "sappformdir='" + appformdir+ "',"
+            elif IVRdir:
+                update_columns += "sIVRdir='" + IVRdir+ "',"
+            elif grcfdir:
+                update_columns += "sgrcfdir='" + grcfdir+ "',"
+            elif grcbdir:
+                update_columns += "sgrcbdir='" + grcbdir+ "',"
+
+        
+            db_update_disbursal_images(lanid, update_columns.rstrip(','))
+            return False
+        postgres_insert_query = """ INSERT INTO post_disbursal_documents_upload (sstate,sbranch,nlanid,ncustid,skycdir,sgpcfbdir,sgpcbbdir,sgpcfcdir,sgpcbcdir,sappformdir,sIVRdir,sgrcfdir,sgrcbdir) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
+        record_to_insert = (state,branch,lanid,custid,kycdir,gpcfbdir,gpcbbdir,gpcfcdir,gpcbcdir,appformdir,IVRdir,grcfdir,grcbdir)
+        cursor.execute(postgres_insert_query, record_to_insert)
+        connection.commit()
+        count = cursor.rowcount
+        print (count, "Record inserted successfully into mobile table")
+        return render_template("index.html")
+    except (Exception, psycopg2.Error) as error :
+        message = "Failed to insert record into mobile table :" + str(error)
+        throw_exception(connection, message)
+    finally:
+        close_connection(connection, cursor)
+        
+def db_select_disbursal_images(lanid = '', nonurlreq = False):     
+    try:
+        form = request.args
+        if form.get("lanid_text"):
+            lanid = form.get("lanid_text").upper()
+        app.logger.debug("LanID request received: {}".format(lanid))    
+        if not bool(lanid):
+            return json.dumps({'type':'Error', 'message':"LanID not found in our database records."}) 
+        connection = psycopg2.connect(user="postgres", password="Brain$00", host="127.0.0.1", port="5432", database="AgyeyavadMSELAP_LIVE")
+        query = masters_view_queries("post_disbursal_documents_upload", "", lanid)
+        cur = connection.cursor(cursor_factory = NamedTupleCursor)
+        cur.execute(query)
+        app.logger.debug(query)
+        template_data = cur.fetchone()
+        if nonurlreq:
+            return cur.rowcount
+        return render_template('imageviewer.html', masters_list = template_data, lanid = lanid, auditid= session["Department"]) 
+    except (Exception, psycopg2.Error) as error :
+        message = "Failed to select record into mobile table :" + str(error)
+        throw_exception(connection, message)
+    finally:
+        close_connection(connection, cur)
+        
+def db_update_disbursal_images(lanid, update_columns):     
+    try:
+        connection = psycopg2.connect(user="postgres", password="Brain$00", host="127.0.0.1", port="5432", database="AgyeyavadMSELAP_LIVE")
+        cursor = connection.cursor()
+        query = "UPDATE post_disbursal_documents_upload SET {} WHERE nlanid = '{}'".format(update_columns, lanid)
+        print("Update query : {}".format(query))
+        cursor.execute(query);
+        connection.commit()
+        return True
+    except (Exception, psycopg2.Error) as error :
+        message = "Failed to Update record into mobile table :" + str(error)
+        throw_exception(connection, message)
+    finally:
+        close_connection(connection, cursor)
+
+@app.route('/delete_audit_images',methods = ['GET','POST'])
+def delete_audit_images():
+    form = request.args
+    delete_img_dir = form.get("delete_img_dir") 
+    lanid = form.get("lanid") 
+    update_columns = "sgpcfbdir='',sgpcbbdir='',sgpcfcdir='',sgpcbcdir='',sappformdir='',sivrdir='',sgrcfdir='',sgrcbdir='',dupdated_date=now()"
+    db_update_disbursal_images(lanid, update_columns)
+    
+    shutil.rmtree(delete_img_dir, ignore_errors=True)
+    print("Delete :" + delete_img_dir)
+    return json.dumps({'type': 'info', 'message': 'Files are has been deleted for Lan ID : <u>{}</u>'.format(lanid)}) 
+
+@app.route('/select_disbursal_images',methods = ['GET','POST'])
+def select_disbursal_images():
+    form = LoginForm()
+
+    if "VerifiedOTP" in session and session["VerifiedOTP"] =="Y":
+        return db_select_disbursal_images()
+    else:
+        form = LoginForm()
+        return render_template('login.html', form = form)
+    
+
+@app.route('/post_disbursal_documents_upload',methods = ['GET','POST'])
+def upload_file(): 
+    success_msg =lanid= ""
+    if request.method =='POST':  
+        form = request.form
+        custId = form.get("custId_text") 
+        state = form.get("state_text") 
+        branch = form.get("branch_text") 
+        lanid = form.get("lanid_text")
+        today = datetime.date.today() 
+        folder_types = ('KYC', 'App_form', 'GPCFB', 'GPCBB', 'GPCFC', 'GPCBC', 'GRCF', 'GRCB', 'IVR')
+        insert_dirs = {}
+        base_dir = 'uploads\\'
+        records_count = 0
+        for folder in folder_types:
+            if folder =='KYC':
+                print(' Dir: {}'.format(lanid))
+                dynamic_dir = base_dir + "{}\{}\{}\{}".format(state,branch,today,custId)
+            else:
+                dynamic_dir = base_dir + "{}\{}\{}\{}".format(state,branch,today,lanid)
+
+            files = request.files.getlist('{}[]'.format(folder)) 
+            for file in files:
+                dynamic_dir = handle_file(file, dynamic_dir, '{}_'.format(folder))
+                insert_dirs[folder] = dynamic_dir
+                    
+        insert_disbursal_record(state,branch,lanid,custId,insert_dirs['KYC'],insert_dirs['GPCFB'],insert_dirs['GPCBB'],insert_dirs['GPCFC'],insert_dirs['GPCBC'],insert_dirs['App_form'],insert_dirs['GRCF'],insert_dirs['GRCB'],insert_dirs['IVR'])
+        success_msg = "Files are uploaded successfully."    
+    return render_template('index.html', success = success_msg, lanid=lanid)
+
+@app.route('/uploads/<path:filename>')
+def uploads_static(filename):
+    return send_from_directory(app.root_path + '/uploads/', filename)
+
+#Logout Module
+@app.route('/SendOTP', methods = ['POST'])
+def SendLoginOTP():
+    form_empcode = request.form.get("empcode")
+    SendOTP(form_empcode)
+    return "OTP has been sent."
+    
+#Verify OTP
+@app.route('/VerifyOTP', methods = ['POST'])
+def VerifyLoginOTP():
+    return VerifyOTP()
+  
+    
 if __name__ == "__main__":
-    application.run(host='0.0.0.0', port=service_port, debug=True)
+    logg_create()
+    app.run(host='0.0.0.0', port=service_port, debug=True) 
+
+
