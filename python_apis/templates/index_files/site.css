@@ -1,0 +1,1020 @@
+﻿body{
+    background: #eee;
+}
+.login-right
+{
+    margin:40px auto; 
+    padding: 30px 30px; 
+    background:#fff;
+    border-radius: 5px;
+
+}
+.body-content
+{
+    margin-top: 20px;
+    padding: 30px 20px;
+    background:#fff;
+    
+}
+.form-group
+{
+    padding-right: 30px;
+}
+.form-group:hover .icons .hover-alert
+{
+    display:inline-block;
+    opacity: 1;
+}
+.form-group:hover .icons .fas
+{
+    margin-right: 1px;
+}
+.form-group .icons
+{
+    /*opacity: 0;
+    display: none;*/
+    position: absolute;
+    right: 0px;
+    bottom: 30%;  
+}
+.form-group .icons .hover-alert{
+    opacity: 0;
+    
+}
+.hover-alert span
+{
+   
+}
+.hover-alert + span{
+  bottom: 0;
+  position: absolute;
+  background: #9c27b088;
+  color:#fff;
+  right:0;
+  margin-top:12px;
+  padding: 1px 2px;
+  border-radius: 1px;
+  font-weight:normal;
+  font-size: 11pt;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+
+/*START -- Dragula Styles Dragging*/
+
+.gu-mirror {
+  position: fixed !important;
+  margin: 0 !important;
+  z-index: 9999 !important;
+  opacity: 0.8;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+  filter: alpha(opacity=80);
+}
+.gu-hide {
+  display: none !important;
+}
+.gu-unselectable {
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+}
+.gu-transit {
+  opacity: 0.2;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+  filter: alpha(opacity=20);
+}
+.drag-row-box {
+    border: solid thin rgba(225, 200, 200, 0.71);
+    padding: 5px 5px;
+    border-radius: 2px;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+/*END -- Dragula Styles Dragging*/
+
+.modal-properties{
+    position: relative;
+    z-index: 99999;
+    top:0;
+   border: solid thin #aaa;
+    background:#fff;
+}
+.modal-properties .form-group .form-control{
+    font-size: 10pt;
+    height: calc(1.70rem + 2px);
+}
+.modal-properties .form-group  label{
+    font-size: 10pt;
+    margin-bottom: 4px;
+}
+.modal-properties .form-group {
+    margin-bottom: 0.2rem;
+}
+.storybox{
+    padding: 20px;
+    background: #ddd;
+}
+
+
+/*Start BreadCrumbs*/
+/* breadcrumb */
+
+.breadcrumb-arrow {
+    min-height: 36px;
+    /*     padding: 0; */
+    line-height: 36px;
+    list-style: none;
+    overflow: auto;
+    /*    background-color: #e6e9ed*/
+    /*background: linear-gradient(to right, #eaeaea 0%,#ffffff 100%);*/
+}
+
+.breadcrumb-arrow li:first-child a {
+    border-radius: 4px 0 0 4px;
+    -webkit-border-radius: 4px 0 0 4px;
+    -moz-border-radius: 4px 0 0 4px;
+}
+
+.breadcrumb-arrow li,
+.breadcrumb-arrow li a,
+.breadcrumb-arrow li span {
+    display: inline-block;
+    /*vertical-align: top;*/
+}
+
+.breadcrumb-arrow li:not(:first-child) {
+    margin-left: -5px;
+}
+
+.breadcrumb-arrow li+li:before {
+    padding: 0;
+    content: "";
+}
+
+.breadcrumb-arrow li span {
+    padding: 0 10px;
+}
+
+.breadcrumb-arrow li a,
+.breadcrumb-arrow li:not(:first-child) span {
+    height: 36px;
+    padding: 0 10px 0 25px;
+    line-height: 36px;
+}
+    
+.breadcrumb-arrow li:first-child a {
+    padding: 0 10px;
+}
+
+.breadcrumb-arrow li a {
+    position: relative;
+    color: #fff;
+    text-decoration: none;
+    background-color: #343a40;
+    border: 1px solid #343a40;
+}
+
+.breadcrumb-arrow li:first-child a {
+    padding-left: 10px;
+}
+
+.breadcrumb-arrow li a:after,
+.breadcrumb-arrow li a:before {
+    position: absolute;
+    top: -1px;
+    width: 0;
+    height: 0;
+    content: '';
+    border-top: 18px solid transparent;
+    border-bottom: 18px solid transparent;
+}
+
+.breadcrumb-arrow li a:before {
+    right: -10px;
+    z-index: 3;
+    border-left-color: #343a40;
+    border-left-style: solid;
+    border-left-width: 10px;
+}
+
+.breadcrumb-arrow li a:after {
+    right: -11px;
+    z-index: 2;
+    border-left: 11px solid #fff;
+}
+
+.breadcrumb-arrow li a:focus,
+.breadcrumb-arrow li a:hover {
+    background-color: #40474e;
+    border: 1px solid #40474e;
+}
+
+.breadcrumb-arrow li a:focus:before,
+.breadcrumb-arrow li a:hover:before {
+    border-left-color: #40474e;
+}
+
+.breadcrumb-arrow li a:active {
+    background-color: #40474e;
+    border: 1px solid #40474e;
+}
+
+.breadcrumb-arrow li a:active:after,
+.breadcrumb-arrow li a:active:before {
+    border-left-color: #40474e;
+}
+
+/*set for Last child*/
+
+.breadcrumb-arrow li.active span {
+    position: relative;
+    color: #fff;
+    text-decoration: none;
+    background-color: #007bff;
+    border: 1px solid #007bff;
+}
+
+.breadcrumb-arrow li.active:first-child span {
+    padding-left: 10px;
+}
+
+.breadcrumb-arrow li.active span:after,
+.breadcrumb-arrow li.active span:before {
+    position: absolute;
+    top: -1px;
+    width: 0;
+    height: 0;
+    content: '';
+    border-top: 18px solid transparent;
+    border-bottom: 18px solid transparent;
+}
+
+.breadcrumb-arrow li.active span:before {
+    right: -10px;
+    z-index: 3;
+    border-left-color: #007bff;
+    border-left-style: solid;
+    border-left-width: 11px;
+}
+
+.breadcrumb-arrow li.active span:after {
+    right: -11px;
+    z-index: 2;
+    border-left: 10px solid #007bff;
+}
+/*End BreadCrumbs */
+
+
+
+/*START Progress Cirle*/
+.progress {
+  width: 100px;
+  height: 100px;
+  line-height: 80px;
+  background: none;
+  margin: 0 auto;
+  box-shadow: none;
+  position: relative;
+}
+.progress:after {
+  content: "";
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 7px solid #eee;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.progress > span {
+  width: 50%;
+  height: 100%;
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  z-index: 1;
+}
+.progress .progress-left {
+  left: 0;
+}
+.progress .progress-bar {
+  width: 100%;
+  height: 100%;
+  background: none;
+  border-width: 7px;
+  border-style: solid;
+  position: absolute;
+  top: 0;
+  border-color: #ffb43e;
+}
+.progress .progress-left .progress-bar {
+  left: 100%;
+  border-top-right-radius: 75px;
+  border-bottom-right-radius: 75px;
+  border-left: 0;
+  -webkit-transform-origin: center left;
+  transform-origin: center left;
+}
+.progress .progress-right {
+  right: 0;
+}
+.progress .progress-right .progress-bar {
+  left: -100%;
+  border-top-left-radius: 75px;
+  border-bottom-left-radius: 75px;
+  border-right: 0;
+  -webkit-transform-origin: center right;
+  transform-origin: center right;
+}
+.progress .progress-value {
+  display: flex;
+  border-radius: 50%;
+  font-size: 22px;
+  text-align: center;
+  line-height: 20px;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-weight: 300;
+  width:100%;
+}
+.progress .progress-value div {
+  margin-top: 10px;
+}
+.progress .progress-value span {
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+/* This for loop creates the 	necessary css animation names 
+Due to the split circle of progress-left and progress right, we must use the animations on each side. 
+*/
+.progress[data-percentage="10"] .progress-right .progress-bar {
+  animation: loading-1 1.5s linear forwards;
+}
+.progress[data-percentage="10"] .progress-left .progress-bar {
+  animation: 0;
+}
+
+.progress[data-percentage="20"] .progress-right .progress-bar {
+  animation: loading-2 1.5s linear forwards;
+}
+.progress[data-percentage="20"] .progress-left .progress-bar {
+  animation: 0;
+}
+
+.progress[data-percentage="30"] .progress-right .progress-bar {
+  animation: loading-3 1.5s linear forwards;
+}
+.progress[data-percentage="30"] .progress-left .progress-bar {
+  animation: 0;
+}
+
+.progress[data-percentage="40"] .progress-right .progress-bar {
+  animation: loading-4 1.5s linear forwards;
+}
+.progress[data-percentage="40"] .progress-left .progress-bar {
+  animation: 0;
+}
+
+.progress[data-percentage="50"] .progress-right .progress-bar {
+  animation: loading-5 1.5s linear forwards;
+}
+.progress[data-percentage="50"] .progress-left .progress-bar {
+  animation: 0;
+}
+
+.progress[data-percentage="60"] .progress-right .progress-bar {
+  animation: loading-5 1.5s linear forwards;
+}
+.progress[data-percentage="60"] .progress-left .progress-bar {
+  animation: loading-1 1.5s linear forwards 1.5s;
+}
+
+.progress[data-percentage="70"] .progress-right .progress-bar {
+  animation: loading-5 1.5s linear forwards;
+}
+.progress[data-percentage="70"] .progress-left .progress-bar {
+  animation: loading-2 1.5s linear forwards 1.5s;
+}
+
+.progress[data-percentage="80"] .progress-right .progress-bar {
+  animation: loading-5 1.5s linear forwards;
+}
+.progress[data-percentage="80"] .progress-left .progress-bar {
+  animation: loading-3 1.5s linear forwards 1.5s;
+}
+
+.progress[data-percentage="90"] .progress-right .progress-bar {
+  animation: loading-5 1.5s linear forwards;
+}
+.progress[data-percentage="90"] .progress-left .progress-bar {
+  animation: loading-4 1.5s linear forwards 1.5s;
+}
+
+.progress[data-percentage="100"] .progress-right .progress-bar {
+  animation: loading-5 1.5s linear forwards;
+}
+.progress[data-percentage="100"] .progress-left .progress-bar {
+  animation: loading-5 1.5s linear forwards 1.5s;
+}
+
+@keyframes loading-1 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(36);
+    transform: rotate(36deg);
+  }
+}
+@keyframes loading-2 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(72);
+    transform: rotate(72deg);
+  }
+}
+@keyframes loading-3 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(108);
+    transform: rotate(108deg);
+  }
+}
+@keyframes loading-4 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(144);
+    transform: rotate(144deg);
+  }
+}
+@keyframes loading-5 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(180);
+    transform: rotate(180deg);
+  }
+}
+.progress {
+  margin-bottom: 1em;
+}
+
+/*END Progress Circle*/
+.dashboard-list .card{
+    /*cursor: pointer;*/
+}
+
+.dashboard-list .card:hover{
+    background: #f9f9f9;
+}
+
+.dashboard-list .card-body{
+    -webkit-box-shadow: -1px 1px 5px -2px rgba(0,0,0,0.34);
+    -moz-box-shadow: -1px 1px 5px -2px rgba(0,0,0,0.34);
+    box-shadow: -1px 1px 5px -2px rgba(0,0,0,0.34);
+}
+
+.fab-container{
+    padding-bottom: 40px;
+    /*max-height: 500px;*/
+}
+.fab-button{
+    position: fixed;
+    right: 30px;
+    color: #3F51B5;
+    cursor: pointer;
+    float:right;
+    position: sticky;
+    bottom: 5px;
+}
+
+.fab-button i{
+    border-radius: 50%;
+    background: #fff;
+}
+
+
+/*START Checkbox*/
+/* The container */
+.container-cb {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Hide the browser's default checkbox */
+.container-cb input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: #eee;
+  border: solid thin #52adf5;
+}
+
+/* On mouse-over, add a grey background color */
+.container-cb:hover input ~ .checkmark {
+  background-color: #ddd;
+}
+
+/* When the checkbox is checked, add a blue background */
+.container-cb input:checked ~ .checkmark {
+  background-color: #2196F3;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the checkmark when checked */
+.container-cb input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the checkmark/indicator */
+.container-cb .checkmark:after {
+  left: 9px;
+  top: 5px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+/*END Checkbox*/
+
+.box-components-fill{
+    border: solid thin #ddd;
+    padding: 30px 20px;
+}
+
+
+.error-disp{
+    float:right;
+    width: 45%;
+    margin-top: 2px;
+    text-align: right;
+}
+.error-disp .error-elem {
+    width: 15px;
+    height:15px;
+    border-radius: 15px;
+    display: inline-flex;
+    margin-left: 2%;
+    padding: 0px;
+    
+    border:solid thin #eee;
+    
+}
+.error-elem.invalid{
+    background: #F44336;
+    opacity: 1;
+    padding:1px;
+}
+.error-elem.localvalid{
+    background: #FFC107;
+    opacity: 1;
+    padding:1px;
+}
+.ok-elem.allvalid{
+    font-size: 15px;
+    color: #4CAF50;
+    opacity: 1;
+}
+.info-elem{
+    color:#444;
+   position: relative;
+}
+.ok-elem.allvalid.pending, .error-elem.localvalid.pending, .error-elem.invalid.pending, .info-elem.pending{
+    opacity: 0.2;
+}
+
+
+.info-elem .tooltip-text
+{
+    display: none;
+    position: absolute;
+    top: 100%;
+    right:0;
+    font-size: 9pt;
+    width: 140px;
+    background: #444;
+    color:#eee;
+    padding: 2px 10px;
+    border-radius: 3px;
+    border: solid 1px #333;
+    text-align: center;
+    z-index: 99;
+
+    -webkit-box-shadow: -2px 4px 14px -2px rgba(0,0,0,0.75);
+-moz-box-shadow: -2px 4px 14px -2px rgba(0,0,0,0.75);
+box-shadow: -2px 4px 14px -2px rgba(0,0,0,0.75);
+
+
+
+
+}
+.info-elem:not(.pending):hover .tooltip-text
+{
+    display: block;
+}
+
+
+.carousel-inner{
+    overflow-y: unset!important;
+    padding: 0px 10px;
+}
+
+
+
+
+
+
+
+
+#crumbs {
+  text-align: center;
+}
+#crumbs h1 {
+  padding: 0 0 30px;
+  text-transform: uppercase;
+  font-size: .9rem;
+  font-weight: 600;
+  letter-spacing: .01rem;
+  color: #8093A7;
+}
+#crumbs ul {
+  list-style: none;
+  display: inline-table;
+}
+#crumbs ul li {
+  display: inline;
+  
+}
+#crumbs ul li a {
+  display: block;
+  float: left;
+  height: 38px;
+  background: #F3F5FA;
+  text-align: center;
+  padding: 7px 20px 0 60px;
+  position: relative;
+  margin: 0 25px 0 0;
+  font-size: 14px;
+  text-decoration: none;
+  color: #666666;
+  margin-bottom: 10px;
+}
+#crumbs ul li a:after {
+  content: "";
+  border-top: 19px solid transparent;
+  border-bottom: 19px solid transparent;
+  border-left: 40px solid #F3F5FA;
+  position: absolute;
+  right: -40px;
+  top: 0;
+  z-index: 1;
+}
+#crumbs ul li a:before {
+  content: "";
+  border-top: 19px solid transparent;
+  border-bottom: 19px solid transparent;
+  border-left: 40px solid #fff;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+#crumbs ul li:first-child a {
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+      /*border: solid thin #d7e2ed;*/
+}
+
+#crumbs ul li:first-child a:before {
+  
+}
+
+/*#crumbs ul li:last-child a {
+  padding-right: 40px;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+}*/
+
+#crumbs ul li:last-child a:after {
+  
+}
+
+#crumbs ul li a:hover, #crumbs ul li.active a {
+  background: #357DFD;
+  color: #fff;
+}
+
+#crumbs ul li a:hover:after,#crumbs ul li.active a:after {
+  border-left-color: #357DFD;
+  color: #fff;
+}
+
+.noselect{
+
+}
+.uib-datepicker tbody .btn{
+    background:#fff;
+    color:#444;
+}
+.uib-datepicker tbody .btn[disabled="disabled"] {
+    background:#ddd;
+}
+
+.inputfile {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+.inputfile + label {
+    padding: 5px 15px;
+    color: #444;
+    background-color: #fff;
+    /*border: solid thin #007bff;*/
+    border: solid 2px #b0d5fd;
+    border-radius : 4px;
+    display: inline-block;
+}
+.inputfile + label i{
+    margin-right: 10px;
+    font-size: 14pt;
+}
+
+.inputfile:focus + label,
+.inputfile + label:hover {
+    background-color: #eee;
+}
+.inputfile + label {
+	cursor: pointer; /* "hand" cursor */
+    font-size: 11pt;
+}
+
+
+
+
+/*START Collapsible*/
+.collapse-c{
+    position:relative;
+    padding: 5px 10px;
+    padding-bottom: 10px;
+    border: solid #e9e9e9 thin;
+    border-radius: 3px;
+    margin-bottom: 7px;
+}
+
+.collapse-c:hover{
+
+    background: #f8f8f8;
+}
+
+.collapse-c .collapse-btn{
+    position: absolute;
+    right: 10px;
+    top: 5px;
+    cursor: pointer;
+    padding: 3px 7px;
+    border-radius: 3px;
+}
+.collapse-c .collapse-btn:hover{
+    background: #eee;
+    border: solid thin #e5e5e5;
+}
+/*END Collapsible*/
+
+.titlediv-c{
+    margin-top: 30px;
+    margin-bottom: 15px;
+    position: relative;
+    
+}
+.titlediv-c .title-float{
+    position: absolute;
+    top:-10px;
+    left: 20px;
+    background:#fff;
+    padding:0 10px;
+    font-weight: 500;
+    color:#555;
+}
+.titlediv-c .title-content{
+    border: solid thin #eee;
+    padding: 10px 15px;
+    padding-top: 20px;
+}
+
+/*START Radio*/
+/* The container */
+.container-rb {
+  display: inline-block;
+  position: relative;
+  padding-left: 35px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  margin-right: 15px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Hide the browser's default radio button */
+.container-rb input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* Create a custom radio button */
+.checkoption {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 21px;
+  width: 21px;
+  background-color: #eee;
+  border-radius: 50%;
+}
+
+/* On mouse-over, add a grey background color */
+.container-rb:hover input ~ .checkoption {
+  background-color: #ccc;
+}
+
+/* When the radio button is checked, add a blue background */
+.container-rb input:checked ~ .checkoption {
+  background-color: #2196F3;
+}
+
+/* Create the indicator (the dot/circle - hidden when not checked) */
+.checkoption:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the indicator (dot/circle) when checked */
+.container-rb input:checked ~ .checkoption:after {
+  display: block;
+}
+
+/* Style the indicator (dot/circle) */
+.container-rb .checkoption:after {
+ 	top: 6px;
+	left: 6px;
+	width: 9px;
+	height: 9px;
+	border-radius: 50%;
+	background: white;
+}
+/*END Radio*/
+
+.container-rb .radio-title{
+    margin-bottom: 12px;
+}
+
+.compact-radio {
+    position: relative;
+    top: -10px;
+}
+
+.compact-radio .container-rb{
+    font-size: 12px;
+    padding-left: 23px;
+
+}
+
+.compact-radio .checkoption {
+    height: 16px;
+    width: 16px;
+    border-radius: 0;
+}
+.compact-radio .container-rb .checkoption:after{
+    top: 4px;
+    left: 4px;
+    width: 8px;
+    height: 8px;
+    
+}
+.compact-radio .error-disp {
+    display: none;
+}
+.compact-radio .radio-title{
+    display: none;
+}
+
+.hiddenblock{
+    display:block; 
+    overflow: auto; 
+    max-height: 200px;
+}
+.hiddenblock.expand{
+    word-break: break-all;
+    overflow:hidden;
+    max-height: 1000px;
+}
+
+
+
+
+
+
+.hidden-fieldblock{
+    background:#f1f1f1; 
+    padding: 2px 5px; 
+    border:solid thin #eee; 
+    margin-bottom: 8px; 
+    margin-top:5px;
+    display:none;
+}
+
+.api-control-errors{
+    clear: both;
+    padding-top: 10px;
+}
+.api-control-errors div{
+    background: rgba(0,0,0,0.4);
+    color: #fff;
+    font-size: 10pt;
+    padding: 5px 10px;
+    border-radius: 2px;
+    border: solid 1px #aaa;
+}
+
+.txtdat
+{
+    display:none;
+}
+.tbldat
+{
+    display: block;
+}
+
+/* Above Tab Screens */
+@media screen and (max-width: 768px) {
+ 
+    .txtdat
+    {
+        display: block;
+    }
+    .tbldat
+    {
+        display: none;
+    }
+}
+
+label, .btn, .form-control {
+    font-size: 0.9rem !important;
+}
+
+.form-control
+{
+    padding: 0.275rem 0.75rem!important;
+    
+    height: calc(2.0rem + 2px)!important;
+}

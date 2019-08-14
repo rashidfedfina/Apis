@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<!-- saved from url=(0038)http://119.226.138.133/MSELAP/Reports/ -->
+<html style="" class=" js flexbox flexboxlegacy canvas canvastext webgl no-touch geolocation postmessage websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers no-applicationcache svg inlinesvg smil svgclippaths">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+      <style type="text/css">@charset "UTF-8";[ng\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}</style>
+      <meta name="viewport" content="width=device-width">
+      <title>Post Disbursal Documents Upload</title>   
+      <script
+  src="https://code.jquery.com/jquery-2.2.4.min.js"
+  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+  crossorigin="anonymous"></script>
+      <link href="{{ url_for('static', filename='bootstrap.css') }}" rel="stylesheet">
+      <link href="{{ url_for('static', filename='site.css') }}" rel="stylesheet">
+      <link rel="stylesheet" href="{{ url_for('static', filename='fed.css') }}">
+      <script  type="text/javascript" src="{{ url_for('static', filename='popper.js') }}"></script>
+      <script  type="text/javascript" src="{{ url_for('static', filename='modernizr-2.6.2.js') }}"></script>
+      <script  type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.1/bootstrap3-typeahead.min.js"></script>  
+    
+      <link rel="stylesheet" href="{{ url_for('static', filename='all.css') }}" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.8.1/baguetteBox.min.css">
+   </head>
+   <body>
+      <style>
+         body
+         {
+         background-color:#f5f5f5;
+         }
+         .imagePreview {
+         width: 100%;
+         height: 180px;
+         background-position: center center;
+         background:url(http://cliquecities.com/assets/no-image-e3699ae23f866f6cbdf8ba2443ee5c4e.jpg);
+         background-color:#fff;
+         background-size: cover;
+         background-repeat:no-repeat;
+         display: inline-block;
+         box-shadow:0px -3px 6px 2px rgba(0,0,0,0.2);
+         }
+         .btn-primary
+         {
+         display:block;
+         border-radius:0px;
+         box-shadow:0px 4px 6px 2px rgba(0,0,0,0.2);
+         margin-top:-5px;
+         }
+         .imgUp
+         {
+         margin-bottom:15px;
+         }
+         .del
+         {
+         position:absolute;
+         top:0px;
+         right:15px;
+         width:30px;
+         height:30px;
+         text-align:center;
+         line-height:30px;
+         background-color:rgba(255,255,255,0.6);
+         cursor:pointer;
+         }
+         .imgAdd
+         {
+         width:30px;
+         height:30px;
+         border-radius:50%;
+         background-color:#4bd7ef;
+         color:#fff;
+         box-shadow:0px 0px 2px 1px rgba(0,0,0,0.2);
+         text-align:center;
+         line-height:30px;
+         margin-top:0px;
+         cursor:pointer;
+         font-size:15px;
+         }
+         .loader{
+         position: fixed;
+         z-index: 9999999999;
+         background: rgba(255,255,255,0.97);
+         padding: 50px;
+         width:100%;
+         height: 100%;
+         display: none;
+         }
+         .loader.show{
+         display:block;
+         }
+         .loader-text{
+         position: absolute;
+         top: 50%;
+         left:0;
+         width:100%;
+         }
+         .grid>[class*='col-'] {
+          display: flex;
+          flex-direction: column;
+          margin-bottom: 25px;
+        }
+
+        .product-tile-inner {
+          position: relative;
+        }
+
+        .product-tile-inner img {
+          width: 100%;
+          height: auto;
+        }
+
+        .product-tile-inner .btn {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          border-radius: 0;
+          opacity: .85;
+        }
+        body {
+            background-color: #434c50;
+            min-height: 100vh;
+            font: normal 16px sans-serif;
+            padding: 40px 0;
+        }
+
+        .container.gallery-container {
+            background-color: #fff;
+            color: #35373a;
+            min-height: 100vh;
+            padding: 30px 50px;
+        }
+
+        .gallery-container h1 {
+            text-align: center;
+            margin-top: 50px;
+            font-family: 'Droid Sans', sans-serif;
+            font-weight: bold;
+        }
+
+        .gallery-container p.page-description {
+            text-align: center;
+            margin: 25px auto;
+            font-size: 18px;
+            color: #999;
+        }
+
+        .tz-gallery {
+            padding: 40px;
+        }
+
+        /* Override bootstrap column paddings */
+        .tz-gallery .row > div {
+            padding: 2px;
+        }
+
+        .tz-gallery .lightbox img {
+            width: 100%;
+            border-radius: 0;
+            position: relative;
+        }
+
+        .tz-gallery .lightbox:before {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-top: -13px;
+            margin-left: -13px;
+            opacity: 0;
+            color: #fff;
+            font-size: 26px;
+            font-family: 'Glyphicons Halflings';
+            content: '\e003';
+            pointer-events: none;
+            z-index: 9000;
+            transition: 0.4s;
+        }
+
+
+        .tz-gallery .lightbox:after {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            background-color: rgba(46, 132, 206, 0.7);
+            content: '';
+            transition: 0.4s;
+        }
+
+        .tz-gallery .lightbox:hover:after,
+        .tz-gallery .lightbox:hover:before {
+            opacity: 1;
+        }
+
+        .baguetteBox-button {
+            background-color: transparent !important;
+        }
+
+        @media(max-width: 768px) {
+            body {
+                padding: 0;
+            }
+        }
+      </style>
+       
+      <nav class="navbar navbar-expand-lg navbar-light bg-light ">
+         <div class="container">
+            <a href="http://119.226.138.133:6001/post_disbursal_documents_upload"><img src="{{ url_for('static', filename='Logo.png') }}" style="height: 40px"></a> 
+            Post Disbursal Documents Upload
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+               <ul class="navbar-nav mr-auto">
+               </ul>
+            </div>
+         </div>
+      </nav>
+      <div class="">
+         <div class="container body-content">
+            <h2>Post Disbursal Documents Upload</h2><br><br>
+          
+            <form id="form1" action="#" method="POST" enctype="multipart/form-data" >
+               <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" rel="stylesheet" />
+
+<div class="tz-gallery">
+
+        <div class="row">
+
+            {% if masters_list.skycdir %} 
+            <div class="col-sm-12 col-md-4"><span style="color:blue">KYC Dir : &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <a class="lightbox" href="{{ masters_list.skycdir }}">
+                    <img src="{{ masters_list.skycdir }}" alt="KYC">
+                </a>
+            </div>
+            {% endif %} 
+            {% if masters_list.sgpcfbdir %}          
+            <div class="col-sm-6 col-md-4"><span style="color:blue">GPC (Front - Branch Copy) Dir : &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+
+                <a class="lightbox" href="{{masters_list.sgpcfbdir}}">
+                    <img src="{{masters_list.sgpcfbdir}}" alt="GPC">
+                </a>
+            </div>
+            {% endif %}
+            {% if masters_list.sgpcbbdir %}          
+            <div class="col-sm-6 col-md-4"><span style="color:blue">GPC (Back - Branch Copy) Dir : &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+
+                <a class="lightbox" href="{{masters_list.sgpcbbdir}}">
+                    <img src="{{masters_list.sgpcbbdir}}" alt="GPC">
+                </a>
+            </div>
+            {% endif %}
+            {% if masters_list.sgpcfcdir %}          
+            <div class="col-sm-6 col-md-4"><span style="color:blue">GPC (Front - Customer Copy) Dir : &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+
+                <a class="lightbox" href="{{masters_list.sgpcfcdir}}">
+                    <img src="{{masters_list.sgpcfcdir}}" alt="GPC">
+                </a>
+            </div>
+            {% endif %}
+            {% if masters_list.sgpcbcdir %}          
+            <div class="col-sm-6 col-md-4"><span style="color:blue">GPC (Back - Customer Copy) Dir : &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+
+                <a class="lightbox" href="{{masters_list.sgpcbcdir}}">
+                    <img src="{{masters_list.sgpcbcdir}}" alt="GPC">
+                </a>
+            </div>
+            {% endif %}
+            {% if masters_list.sappformdir %}
+            <div class="col-sm-6 col-md-4"><span style="color:blue">APP Form Dir : &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <a class="lightbox" href="{{masters_list.sappformdir}}">
+                    <img src="{{masters_list.sappformdir}}" alt="APP Form">
+                </a>
+            </div><br />
+            {% endif %}
+            {% if masters_list.sgrcfdir %}
+            <div class="col-sm-6 col-md-4"><span style="color:blue">GRC (Front) Dir : &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <a class="lightbox" href="{{masters_list.sgrcfdir}}">
+                    <img src="{{masters_list.sgrcfdir}}" alt="APP Form">
+                </a>
+            </div><br />
+            {% endif %}    
+            {% if masters_list.sgrcbdir %}
+            <div class="col-sm-6 col-md-4"><span style="color:blue">GRC (Back)  Dir : &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <a class="lightbox" href="{{masters_list.sgrcbdir}}">
+                    <img src="{{masters_list.sgrcbdir}}" alt="APP Form">
+                </a>
+            </div><br />
+            {% endif %} 
+            {% if masters_list.sIVRdir %}
+            <div class="col-sm-6 col-md-4"><span style="color:blue">IVR Dir : &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <a class="lightbox" href="{{masters_list.sIVRdir}}">
+                    <img src="{{masters_list.sIVRdir}}" alt="IVR">
+                </a>
+            </div><br />
+            {% endif %}
+        </div>
+
+    </div>
+
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+            </form>
+            
+             
+            <hr>
+            <footer>
+               <p>© FedBank Verification </p>
+               <br>               
+            </footer>
+         </div>
+      </div>
+       
+      <link href="{{ url_for('static', filename='com_fedbank.css') }}" rel="stylesheet">
+      <link href="{{ url_for('static', filename='com_infinity.css') }}" rel="stylesheet">
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.1/bootstrap3-typeahead.min.js"></script>  
+  
+   </body>
+   <script  type="text/javascript" src="https://twitter.github.io/typeahead.js/releases/latest/typeahead.bundle.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.8.1/baguetteBox.min.js"></script>
+<script>
+    baguetteBox.run('.tz-gallery');
+</script>
+</html>

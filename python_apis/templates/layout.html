@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<!-- saved from url=(0038)http://119.226.138.133/MSELAP/Reports/ -->
+<html style="" class=" js flexbox flexboxlegacy canvas canvastext webgl no-touch geolocation postmessage websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers no-applicationcache svg inlinesvg smil svgclippaths">
+   <head>
+      <meta name="viewport" http-equiv="Content-Type" content="width=device-width, initial-scale=1.0; text/html; charset=UTF-8">
+      
+      <title>Post Disbursal Documents Upload</title>   
+      <link href="{{ url_for('static', filename='site.css') }}" rel="stylesheet">
+      <link href="{{ url_for('static', filename='component.css') }}" rel="stylesheet">
+      <script src="{{ url_for('static', filename='js/jquery-3.3.1.js') }}"></script>
+      <script>
+
+           baseurl = 'http://119.226.138.133:6001/';
+     </script>
+     <!-- Compiled and minified CSS -->    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+<!-- Compiled and minified JavaScript -->    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>      <!--Import Google Icon Font-->
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> <!--Let browser know website is optimized for mobile-->
+    
+            
+   </head>
+   <style>
+   .label {
+  color: white;
+  padding: 8px;
+}
+   </style>
+   <body> 
+      <nav style="background-color: #4448aa !important;" class="navbar navbar-expand-lg navbar-light bg-light>
+         <div class="container"> 
+            <img src="{{ url_for('static', filename='Logo.png') }}" style="height: 40px"> 
+            </a>
+             
+            <div class="collapse navbar-collapse" id="navbarSupportedContent" >
+               <ul class="nav navbar-nav navbar-right">                                    </ul>
+            </div>
+         </div>
+      </nav>
+      <div class="">{% if session['VerifiedOTP'] == "Y" %}                      <span style="position: absolute;right:15%;top:10">                      <label><font color="black"><b>Hi, {{session["Employee Name"]}}</b></font></label>&nbsp;&nbsp;<a href="/logout" class="waves-effect waves-light btn"><i class="material-icons right">exit_to_app</i>Logout</a>                      </span>                    {% else %}                      <font color="white"><span style="position: absolute;right:0;top:0"><a href="/login">Login <span class="sr-only">(current)</span></a></span>                    {% endif %}
+             </div>       
+         <div class="container body-content"><br />
+            <h5>POST DISBURSAL DOCUMENTS UPLOAD</h5>
+                {% block content %}{% endblock %}
+            <hr>
+            <footer>
+               <p>© FedBank Verification </p>
+               <br>               
+            </footer>
+         </div>
+      </div>
+       
+   </body>
+   {% block script %}{% endblock %}

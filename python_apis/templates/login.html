@@ -1,0 +1,48 @@
+﻿{% include "header.html" %}
+    
+
+            <div class="row">
+
+                <div class="col-md-4  login-right" style="">
+                   
+                        <div style="text-align:center;">
+                            <img src="{{ url_for('static', filename='Logo.png') }}" style="width:200px; padding-bottom: 30px;" />
+                        </div>
+ 
+                    <h4 class="text-center text-primary" style="font-weight:400;">
+                    FedBank Document Scanner
+                    </h4><div id="flash"></div>
+                    <hr />
+
+                    <small>Employee Code</small>
+                    
+                    <div class="input-group mb-2">
+
+                        <input type="text" id="txtMobileNo" name="txtMobileNo" class="form-control borderrad20" placeholder="Employee Code" aria-describedby="basic-addon1"
+                               value="">
+                    </div>
+                    <br />
+                    <div class="row">
+                        
+                        <div class="col text-right">
+                            <button type="button" id="btnGetOTP" class="btn btn-outline-primary borderrad20 ">
+                            <i class="fas fa-spinner fa-spin spinner otp" style="margin-right: 10px;"></i>Get OTP</button>
+                        </div>
+                    </div>
+                   
+                    <div id="divotp" style="display:none;">
+                        <div class="row">
+                            <div class="col">
+                                <small>Enter OTP</small>
+                                <input type="number" id="txtOTP" class="form-control borderrad20" placeholder="OTP" aria-describedby="basic-addon1">
+                            </div>
+                        </div>
+                        <br/>
+                        <div class="row">
+                            
+                            <div class="col">
+                                <button type="button" id="btnVerifyOTP" class="btn btn-primary btn-lg btn-block borderrad30">LOGIN</button>
+                            </div>
+
+                        </div>
+{% include "footer.html" %}

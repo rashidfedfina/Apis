@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Login</title> 
+      <link href="{{ url_for('static', filename='site.css') }}" rel="stylesheet">
+      <link href="{{ url_for('static', filename='component.css') }}" rel="stylesheet">
+      <script src="{{ url_for('static', filename='js/jquery-3.3.1.js') }}"></script>
+    <link href="{{ url_for('static', filename='bootstrap.css') }}" rel="stylesheet"/>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='fed.css') }}">
+    
+    <script src="https://unpkg.com/popper.js@1.14.6/dist/umd/popper.js"></script>
+    <script src="{{ url_for('static', filename='js/modernizr-2.6.2.js') }}"></script>
+
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+
+    <script>
+
+        baseurl = 'http://119.226.138.133:6001/';
+        //var baseurl = '/Agyeyavad_SandboxEncore';
+        //var baseurl = '/Agyeyavad_SandboxFed';
+
+        function makeAppCall(func_ref) {
+            try {
+                func_ref();
+            }
+            catch (err) { }
+        }
+
+        function toggleLoader(showState, txt) {
+            if (showState) {
+            $('.loader').addClass('show');
+            }
+            else {
+            $('.loader').removeClass('show');
+
+            }
+        $('.loader-message').text(txt);
+        }
+    </script>
+    </head>
+
+    <body>
+
+    <style>
+        .loader{
+                position: fixed;
+                z-index: 9999999999;
+                background: rgba(255,255,255,0.97);
+                padding: 50px;
+                width:100%;
+                height: 100%;
+                display: none;
+            }
+        .loader.show{
+                display:block;
+            }
+        .loader-text{
+                position: absolute;
+                top: 50%;
+                left:0;
+                width:100%;
+            }
+    </style>
+    <div class="loader">
+        <div class="loader-text text-center">
+            <i class="fas fa-spinner fa-spin fa-3x text-primary" style="margin-bottom: 5px;"></i><br/>
+            <span class="text-primary loader-message">Loading</span>
+        </div>
+    </div>
+
+            

@@ -1,0 +1,10 @@
+.error-box-style1 div small
+{
+    background: rgba(0,0,0,0.4);
+    color: #fff;
+    font-size: 10pt;
+    padding: 5px 10px;
+    border-radius: 2px;
+    border: solid 1px #aaa;
+    display:block;  
+}

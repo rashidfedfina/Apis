@@ -1,0 +1,170 @@
+
+<html style="" >
+   <body class="main"> 
+<meta name="viewport" http-equiv="Content-Type" content="width=device-width, initial-scale=1.0; text/html; charset=UTF-8">
+      
+<link href="{{ url_for('static', filename='site.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='component.css') }}" rel="stylesheet">
+<script src="{{ url_for('static', filename='js/jquery-3.3.1.js') }}"></script>
+
+<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+
+<script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+<script src="{{ url_for('static', filename='jquery.imagebox.js') }}"></script>
+<div class="container">
+{% if message|length %}
+    <h3>No images found.</h3> 
+{% endif %}
+
+<div id="flash"></div> <br />
+ <div class="row">
+   {% if masters_list.skycdir %}
+    <div class="col-md-4"> 
+        <span style="color:blue">KYC Dir :   &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <img class="img img-test" id="KYC" style="width:310px !important;height:250px !important;" data-url="{{masters_list.skycdir}}" src="{{masters_list.skycdir}}"></img><br />
+    </div> 
+    {% endif %} 
+   {% if masters_list.sappformdir %}  
+   <input type="hidden" id="hidden_img_dir" value="{{masters_list.sappformdir}}" />
+    <div class="col-sm-4"> 
+         <span style="color:blue">APP Form Dir :  &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+         <img class="img img-test" id="APPform"   style="width:310px !important;height:250px !important;" data-url="{{masters_list.sappformdir}}" src="{{masters_list.sappformdir}}"></img><br />    </div> 
+    {% endif %} 
+    
+    {% if masters_list.sivrdir %}
+   <input type="hidden" id="hidden_img_dir" value="{{masters_list.sivrdir}}" />
+    <div class="col-md-4"> 
+        <span style="color:blue">IVR Dir :   &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><br />
+        <img class="img img-test"  id="IVR"  style="width:310px !important;height:250px !important;" data-url="{{masters_list.sivrdir}}" src="{{masters_list.sivrdir}}"></img><br />    </div> 
+    {% endif %} 
+    
+    
+    {% if masters_list.sgpcfbdir %}
+   <input type="hidden" id="hidden_img_dir" value="{{masters_list.sgpcfbdir}}" />
+    <div class="col-md-4"> 
+        <span style="color:blue">GPC (Front - Branch Copy) Dir :    &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+   <img class="img img-test"  id="GPCFB"  style="width:310px !important;height:250px !important;" data-url="{{masters_list.sgpcfbdir}}" src="{{masters_list.sgpcfbdir}}"></img><br />
+    </div> 
+    {% endif %} 
+     
+        {% if masters_list.sgpcfcdir %}
+   <input type="hidden" id="hidden_img_dir" value="{{masters_list.sgpcfcdir}}" />
+    <div class="col-md-4">        <span style="color:blue">GPC (Front - Customer Copy) Dir :  &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    <img class="img img-test"  id="GPCFC"  style="width:310px !important;height:250px !important;" style="width:310px !important;height:250px !important;"  data-url="{{masters_list.sgpcfcdir}}" src="{{masters_list.sgpcfcdir}}"></img><br />   </div> 
+    {% endif %} 
+    {% if masters_list.sgpcbcdir %}
+    <input type="hidden" id="hidden_img_dir" value="{{masters_list.sgpcbcdir}}" />
+    <div class="col-md-4">            <span style="color:blue">GPC (Back - Customer Copy) Dir :  &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <img class="img img-test"  id="GPCBC"  style="width:310px !important;height:250px !important;" style="width:310px !important;height:250px !important;"  data-url="{{masters_list.sgpcbcdir}}" src="{{masters_list.sgpcbcdir}}"></img><br />    </div> 
+    {% endif %} 
+  
+   {% if masters_list.sgpcbbdir %}
+   <input type="hidden" id="hidden_img_dir" value="{{masters_list.sgpcbbdir}}" />
+    <div class="col-md-4">   
+   <span style="color:blue">GPC (Back - Branch Copy)  Dir :  &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+   <img class="img img-test"  id="GPCBB" style="width:310px !important;height:250px !important;"  data-url="{{masters_list.sgpcbbdir}}" src="{{masters_list.sgpcbbdir}}"></img><br />    </div> 
+    {% endif %} 
+   
+   {% if masters_list.sgrcfdir %}
+   <input type="hidden" id="hidden_img_dir" value="{{masters_list.sgrcfdir}}" />
+    <div class="col-md-4">   
+   <span style="color:blue">GRC (Front) Dir :  &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+   <img class="img img-test" id="GRCF"  style="width:310px !important;height:250px !important;"  data-url="{{masters_list.sgrcfdir}}" src="{{masters_list.sgrcfdir}}"></img><br />    </div> 
+    {% endif %} 
+   
+   {% if masters_list.sgrcbdir %}
+   <input type="hidden" id="hidden_img_dir" value="{{masters_list.sgrcbdir}}" />
+    <div class="col-md-4">   
+   <span style="color:blue">GRC (Back)Dir :  &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+   <img class="img img-test"  id="GRCB" style="width:310px !important;height:250px !important;"  data-url="{{masters_list.sgrcbdir}}" src="{{masters_list.sgrcbdir}}"></img><br />    </div> 
+    {% endif %} 
+    <div class="col-md-6"  style="margin-left: 40%">
+    <br />    <div class="input-group" > 
+                <input type='submit' onclick="goBack()" id='Back' value='&nbsp;&nbsp;Back&nbsp;&nbsp;'  class="btn btn-info">                            {% if auditid %}
+                <input type='submit'  id='audit-approve-btn' value='Audit Approve'  class="btn btn-danger inputfile-1">
+            {% endif %}
+            </p>
+        </div>
+    </div>
+     </div>
+  <script type="text/javascript">
+      $(".main").imageBox();
+  </script>
+  <script type="text/javascript">
+      baseurl = 'http://119.226.138.133:6001/';
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-36251023-1']);
+      _gaq.push(['_setDomainName', 'jqueryscript.net']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+          var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+          ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+      var getUrlParameter = function getUrlParameter(sParam) {
+          var sPageURL = window.location.search.substring(1),
+        sURLVariables = sPageURL.split('&'),
+        sParameterName,
+        i;
+
+          for (i = 0; i < sURLVariables.length; i++) {
+              sParameterName = sURLVariables[i].split('=');
+
+              if (sParameterName[0] === sParam) {
+                  return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+              }
+          }
+      };
+
+      function goBack() {
+          window.history.back();
+      }
+ 
+      $(document).ready(function() {
+
+          //$('.inputfile-1').attr('disabled', 'disabled');
+          $("#audit-approve-btn").click(function(e) {
+              url = $('#hidden_img_dir').val();
+              var arr = '';
+              if (url) {
+                  arr = url.split('\\');
+              }
+              e.preventDefault();
+              $.ajax(baseurl + 'delete_audit_images', {
+                  type: 'GET',  // http method
+                  data: {
+                      delete_img_dir: arr[0] + '\\' + arr[1] + '\\' + arr[2] + '\\' + arr[3] + '\\' + arr[4] + '\\',
+                      lanid: getUrlParameter('lanid_text')
+                  }, // data to submit
+                  success: function(data, status, xhr) {
+                      resp = JSON.parse(data);
+                      $('#flash').append(flashMessage(resp));
+                      location.reload(true); 
+                      hide_flash_alerts(3500); 
+                  },
+                  error: function(jqXhr, textStatus, errorMessage) {
+                      alert('Error' + errorMessage);
+                  }
+              });
+              hide_flash_alerts(3500);
+          });
+      });
+      function hide_alerts(time) {
+
+          window.setTimeout(function() {
+              $(".alert").fadeTo(1000, 0).slideUp(1000, function() {
+                  $(this).remove();
+              });
+          }, time);
+      }
+      var flashMessage = function(data) {
+          return '<div class="alert alert-' + data.type + '"><a href="#" class="close" data-dismiss="alert">&times;</a>' + data.message + '</div>';
+
+      };
+      
+</script>
+
+</body>
+</html>

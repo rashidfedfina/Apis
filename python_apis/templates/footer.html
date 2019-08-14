@@ -1,0 +1,100 @@
+            <hr />
+            <footer>
+                <p>&copy; FedBank KYC Verification </p>
+                <br/>               
+            </footer>
+
+<script>
+    function setOTP(otp) {
+        $('#txtOTP').val(otp);
+        setTimeout(function () {
+            $('#btnVerifyOTP').click();
+        }, 1000);
+    }
+
+    $('.spinner.otp, #divotp, #divOTPErr').hide();
+
+    $(document).ready(function() {
+
+        $("#btnGetOTP").click(function() {
+            if ($('#txtMobileNo').val() =='') {
+                M.toast({ html: "Employee Code is required.", classes: 'rounded' });
+            }
+            $('#divOTPErr').hide();
+            $('#btnGetOTP').attr("disabled", "disabled");
+            $('.spinner.otp').show();
+            $.post(baseurl + "SendOTP",
+                    {
+                        sOTP: $('#txtOTP').val(),
+                        empcode: $('#txtMobileNo').val()
+                    },
+                    function(data, status) {
+                        M.toast({ html: data, classes: 'rounded' });
+                        $('.spinner.otp').hide();
+                        if (data.length > 0) {
+                            try {
+                                Android.ReadOTP();
+                            }
+                            catch (err) { }
+
+                            $('#divotp').show();
+                            $('#txtOTP').focus();
+                            $('#btnGetOTP').attr("disabled", "disabled");
+
+                        }
+                        else if (data == -1) {
+                            $('#errotp').text("Mobile Number not Registered, Kindly contact Admin.");
+                            $('#divOTPErr').show();
+                            $('#divotp').hide();
+
+                            $('#btnGetOTP').removeAttr("disabled");
+                        }
+                        else {
+                            $('#divotp').hide();
+
+                            $('#errotp').text("Error occured, Please try again after sometime.");
+                            $('#divOTPErr').show();
+                            $('#btnGetOTP').removeAttr("disabled");
+                        }
+                    });
+        });
+
+        $("#btnVerifyOTP").click(function() {
+            $('#divOTPErr').hide();
+            $(this).attr("disabled", "disabled");
+            $.post(baseurl + "VerifyOTP",
+                    {
+                        sOTP: $('#txtOTP').val(),
+                        sMobileNo: $('#txtMobileNo').val()
+                    },
+                    function(data, status) {
+
+                        if (data == 1 || data == 3) {
+                            window.location = '/post_disbursal_documents_upload?type=' + data;
+                            $('#divOTPErr').hide();
+                            $("#btnVerifyOTP").removeAttr("disabled");
+                        }
+                        else if (data == 2) {
+                            window.location = '/';
+                            $('#divOTPErr').hide();
+                            $("#btnVerifyOTP").removeAttr("disabled");
+                        }
+                        else {
+                            $('#errotp').text("Please enter valid OTP.");
+                            $('#divOTPErr').show();
+                            $("#btnVerifyOTP").removeAttr("disabled");
+
+                        } M.toast({ html: data, classes: 'rounded' });
+                    });
+        });
+
+    });
+
+
+</script>
+   <!-- Compiled and minified CSS -->    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+<!-- Compiled and minified JavaScript -->    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>      <!--Import Google Icon Font-->
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> <!--Let browser know website is optimized for mobile-->
+    
+</body>
+</html>
