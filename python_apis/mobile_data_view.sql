@@ -1,43 +1,55 @@
+GO
 
+ 
 
-Declare
+/****** Object:  View [dbo].[MOBILE_DATA]    Script Date: 06-12-2019 16:05:12 ******/
 
-@fromDate Datetime,
+SET ANSI_NULLS ON
 
-@todate Datetime
+GO
 
-Set @fromDate = '09/01/2019' -- MM/DD/YYYY
+ 
 
-set @todate = '10/19/2019' -- MM/DD/YYYY
+SET QUOTED_IDENTIFIER ON
+
+GO
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ALTER VIEW [dbo].[MOBILE_DATA]
+
+AS
 
 SELECT 
 
        LA.LOANACCOUNTNUMBER AS LOAN_AGREEMENT_NO,
 
-                   LAP.DateofApplication as TRANSACTION_DATE,
+          LAP.DateofApplication as TRANSACTION_DATE,
 
        --LA.APPLICATIONID AS APPLICATION_ID,
 
        MB.BRANCHNAME AS BRANCH_NAME,
 
-                     STA.Description as State_name ,
+            STA.Description as State_name ,
 
        C.CUSTOMERCODE AS CUSTOMERID,
 
-                   LS.LOANDISBURSEDDATE AS DISBURSAL_DATE,
-
-                   Case when Lap.WorkFlowID = 24 then LS.LoanClosedDate
-
-       when Lap.WorkFlowID = 81 then ls.LoanApproveddate
-
-       end as LOAN_CANCELLATION_DATE,
-
-       Case when Lap.WorkFlowID in (24,81) then null
-
-       else LS.LoanClosedDate end AS FORECLOSURE_DATE,
-
        ISNULL(C.CUSTOMERFIRSTNAME,'')+' '+ISNULL(C.CUSTOMERMIDDLENAME,'')+' '+ISNULL(C.CUSTOMERLASTNAME,'') AS CUSTOMERNAME,
-LA.LOANAMOUNT as LOAN_AMOUNT 
+
+          LA.ApprovedLoanAmount
+
    
 
  
@@ -58,13 +70,13 @@ FROM LOANSUMMARY LS WITH(NOLOCK)
 
        LEFT OUTER JOIN (SELECT LOANID, Count(1) as Installmentoverdue, SUM(EMI.PendingInterest) PendingInterest, SUM(EMI.PendingPrincipal)PendingPrincipal,
 
-                                                                                   SUM(emi.PendingPenalty)PendingPenalty
+                                     SUM(emi.PendingPenalty)PendingPenalty
 
-                                                                                   FROM EMI WITH(NOLOCK) inner join M_Branch b on emi.Enddate <= b.WorkingDate 
+                                     FROM EMI WITH(NOLOCK) inner join M_Branch b on emi.Enddate <= b.WorkingDate 
 
-                                                                                   and emi.EMIStatus <> 'P' and (isnull(emi.PendingInterest,0)+ isnull(emi.PendingInterest,0) + isnull(emi.PendingPenalty,0))>=0 and b.BranchID =1 GROUP BY LOANID)
+                                     and emi.EMIStatus <> 'P' and (isnull(emi.PendingInterest,0)+ isnull(emi.PendingInterest,0) + isnull(emi.PendingPenalty,0))>=0 and b.BranchID =1 GROUP BY LOANID)
 
-                                                                                   AS E2 ON E2.LoanID=LS.Loanid
+                                     AS E2 ON E2.LoanID=LS.Loanid
 
        left outer join (select count(1) paidemi,loanid from emi with(nolock) where EMIStatus = 'P' group by loanid ) e3 on e3.LoanID = ls.Loanid
 
@@ -76,13 +88,13 @@ FROM LOANSUMMARY LS WITH(NOLOCK)
 
        INNER JOIN M_BRANCH MB WITH(NOLOCK) ON MB.BRANCHID = LS.BRANCHID
 
-                  INNER JOIN M_State AS STA WITH (nolock) ON STA.StateID = mb.StateID
+         INNER JOIN M_State AS STA WITH (nolock) ON STA.StateID = mb.StateID
 
        INNER JOIN M_SCHEMENAME MS WITH(NOLOCK) ON MS.SCHEMENAMEID = LAP.SCHEMEID
 
        INNER JOIN CUSTOMER C WITH(NOLOCK) ON C.CUSTOMERID = LS.CUSTOMERID
 
-                --  INNER JOIN CustomerIDProof CID WITH(NOLOCK) ON CID.CUSTOMERID = LS.CUSTOMERID
+       --  INNER JOIN CustomerIDProof CID WITH(NOLOCK) ON CID.CUSTOMERID = LS.CUSTOMERID
 
        INNER JOIN M_WORKFLOW MW WITH(NOLOCK) ON MW.WORKFLOWID = LAP.WORKFLOWID
 
@@ -90,11 +102,11 @@ FROM LOANSUMMARY LS WITH(NOLOCK)
 
  
 
-                   left outer join ( select LoanID,sum(isnull(TotalPaid,0)) TotalPaid,sum(isnull(TotalDue,0)) TotalDue from NonLoanOtherCharges nlh
+          left outer join ( select LoanID,sum(isnull(TotalPaid,0)) TotalPaid,sum(isnull(TotalDue,0)) TotalDue from NonLoanOtherCharges nlh
 
-                                                                                                inner join NonLoanOtherChargesDtl nld on nlh.HdrID=nld.NonLoanHdrID   group by LoanID )
+                                         inner join NonLoanOtherChargesDtl nld on nlh.HdrID=nld.NonLoanHdrID   group by LoanID )
 
-                                                                                                as NLOCD on NLOCD.LoanID=la.LoanId
+                                         as NLOCD on NLOCD.LoanID=la.LoanId
 
  
 
@@ -106,5 +118,10 @@ FROM LOANSUMMARY LS WITH(NOLOCK)
 
 --where la.loanaccountnumber='FEDJHP0GL0784276'
 
-where LS.LOANDISBURSEDDATE between @fromDate and @todate
+ 
 
+ 
+
+ 
+
+GO
